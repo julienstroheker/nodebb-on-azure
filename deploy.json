@@ -8,7 +8,7 @@
     }
   },
   "variables": {
-    "servicePlanName": "[concat('nodebb-sp',uniqueString(resourceGroup().id))]",
+    "servicePlanName": "[concat('nodebb-sp-',uniqueString(resourceGroup().id))]",
     "appName": "[concat('nodebb-web-',parameters('prefix'),uniqueString(resourceGroup().id))]",
     "redisName": "[concat('nodebb-red-',parameters('prefix'),uniqueString(resourceGroup().id))]"
   },
