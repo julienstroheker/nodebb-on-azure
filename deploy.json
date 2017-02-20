@@ -1,0 +1,84 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "prefix": {
+      "defaultValue": "azure",
+      "type": "string"
+    }
+  },
+  "variables": {
+    "servicePlanName": "[concat('nodebb-sp',uniqueString(resourceGroup().id))]",
+    "appName": "[concat('nodebb-web-',parameters('prefix'),uniqueString(resourceGroup().id))]",
+    "redisName": "[concat('nodebb-red-',parameters('prefix'),uniqueString(resourceGroup().id))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('servicePlanName')]",
+      "apiVersion": "2016-03-01",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "B1",
+        "capacity": 1
+      },
+      "kind": "linux",
+      "properties": {
+        "workerSizeId": 0,
+        "reserved": true,
+        "hostingEnvironment": ""
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('appName')]",
+      "apiVersion": "2016-03-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "name": "[variables('appName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('servicePlanName'))]"
+      ],
+      "resources": [
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2016-03-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('appName'))]"
+          ],
+          "tags": {
+            "displayName": "appSettings"
+          },
+          "properties": {
+            "DOCKER_CUSTOM_IMAGE_NAME": "julienstroheker/nodebb-on-azure",
+            "DOCKER_CUSTOM_IMAGE_RUN_COMMAND": "",
+            "PORT": "4567"
+          }
+        }
+      ]
+    },
+    {
+        "type": "Microsoft.Cache/Redis",
+        "name": "[variables('redisName')]",
+        "apiVersion": "2016-04-01",
+        "location": "[resourceGroup().location]",
+        "properties": {
+            "redisVersion": "3.2",
+            "sku": {
+                "name": "Basic",
+                "family": "C",
+                "capacity": 0
+            },
+            "enableNonSslPort": true,
+            "redisConfiguration": {
+                "maxclients": "256",
+                "maxmemory-reserved": "2",
+                "maxmemory-delta": "2"
+            }
+        }
+    }
+  ]
+}
