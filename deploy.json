@@ -73,11 +73,7 @@
                 "capacity": 0
             },
             "enableNonSslPort": true,
-            "redisConfiguration": {
-                "maxclients": "256",
-                "maxmemory-reserved": "2",
-                "maxmemory-delta": "2"
-            }
+            "redisConfiguration": {}
         }
     }
   ]
