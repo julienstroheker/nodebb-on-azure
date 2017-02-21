@@ -1,5 +1,7 @@
 ## Deploy NodeBB on Azure PaaS
 
+**This deployment is for tests and development purpose** 
+
 Automated deployment of NodeBB with the following resourses on Azure :
 * Service Plan using Web App on linux (Preview) - Basic B1 Plan
 * Redis Cache on PaaS - Basic C0 Plan
